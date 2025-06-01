@@ -18,11 +18,15 @@ export class ProdutoController {
     return this.produtoService.findOne(+id);
   }
 
+  @Get('buscar/:nome')
+  findByName(@Param('nome') nome: string): Promise<Produto[]> {
+  return this.produtoService.findByName(nome);
+}
+
   @Post()
   create(@Body() data: CreateProdutoDto): Promise<Produto> {
   return this.produtoService.create(data);
 }
-
 
   @Put(':id')
   update(@Param('id') id: string, @Body() data: UpdateProdutoDto): Promise<Produto> {

@@ -20,4 +20,21 @@ model Produto {
   descricao String?
   preco      Float
   estoque       Int
+  itensCarrinho ItemCarrinho[]
+}
+
+model Carrinho {
+  id        Int           @id @default(autoincrement())
+  criacao  DateTime      @default(now())
+  finalizado Boolean      @default(false)
+  itens     ItemCarrinho[]
+}
+
+model ItemCarrinho {
+  id          Int      @id @default(autoincrement())
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+  produtoId   Int
+  quantidade  Int
+  carrinho    Carrinho @relation(fields: [carrinhoId], references: [id])
+  carrinhoId  Int
 }

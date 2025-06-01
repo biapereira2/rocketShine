@@ -25,6 +25,15 @@ export class ProdutoService {
     });
   }
 
+  async findByName(nome: string): Promise<Produto[]> {
+    return this.prisma.produto.findMany({
+      where: { 
+        nome:{
+          contains: nome.toLowerCase()
+        } },
+    });
+  }
+
   async update(id: number, updateProdutoDto: UpdateProdutoDto): Promise<Produto> {
     return this.prisma.produto.update({
       where: { id },

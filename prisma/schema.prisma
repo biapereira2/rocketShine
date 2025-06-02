@@ -20,6 +20,7 @@ model Produto {
   descricao String?
   preco      Float
   itensCarrinho ItemCarrinho[]
+  favoritos   Favorito[]
 }
 
 model Carrinho {
@@ -36,4 +37,12 @@ model ItemCarrinho {
   quantidade  Int
   carrinho    Carrinho @relation(fields: [carrinhoId], references: [id])
   carrinhoId  Int
+}
+
+model Favorito {
+  id         Int      @id @default(autoincrement())
+  produto    Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  produtoId  Int
+
+  @@unique([produtoId])
 }

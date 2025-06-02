@@ -5,8 +5,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('The API description')
+    .setTitle('RocketShine API')
+    .setDescription('Projeto em Nest.js com Typescript e Prisma para o desafio backend da Rocketlab')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

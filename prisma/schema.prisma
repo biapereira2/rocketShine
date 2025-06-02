@@ -19,7 +19,6 @@ model Produto {
   nome        String
   descricao String?
   preco      Float
-  estoque       Int
   itensCarrinho ItemCarrinho[]
 }
 

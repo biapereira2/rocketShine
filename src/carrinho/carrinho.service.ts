@@ -48,8 +48,8 @@ export class CarrinhoService {
     });
   }
 
-      async atualizarItens(updateCarrinhoDto: UpdateCarrinhoDto) {
-    // Busca o carrinho aberto
+    async atualizarItens(updateCarrinhoDto: UpdateCarrinhoDto) {
+
     const carrinho = await this.prisma.carrinho.findFirst({
       where: { finalizado: false },
       include: { itens: true },
@@ -59,31 +59,25 @@ export class CarrinhoService {
       throw new Error('Carrinho não encontrado');
     }
 
-    // Extrai os produtos atuais do carrinho
     const itensAtuais = carrinho.itens;
 
-    // Produtos que vieram na atualização
     const produtosAtualizados = (updateCarrinhoDto.itens ?? []).map(item => item.produtoId);
 
-    // Remover itens que estão no carrinho mas não vieram na atualização
     for (const itemAtual of itensAtuais) {
       if (!produtosAtualizados.includes(itemAtual.produtoId)) {
         await this.prisma.itemCarrinho.delete({ where: { id: itemAtual.id } });
       }
     }
 
-    // Atualizar ou criar os itens enviados
     for (const item of updateCarrinhoDto.itens ?? []) {
       const itemExistente = itensAtuais.find(i => i.produtoId === item.produtoId);
 
       if (itemExistente) {
-        // Atualiza a quantidade do item existente
         await this.prisma.itemCarrinho.update({
           where: { id: itemExistente.id },
           data: { quantidade: item.quantidade },
         });
       } else {
-        // Cria novo item no carrinho
         await this.prisma.itemCarrinho.create({
           data: {
             carrinhoId: carrinho.id,
@@ -94,7 +88,6 @@ export class CarrinhoService {
       }
     }
 
-    // Retorna o carrinho atualizado já com os itens e produtos
     return this.prisma.carrinho.findUnique({
       where: { id: carrinho.id },
       include: {
@@ -131,7 +124,7 @@ export class CarrinhoService {
       where: { id: item.id },
     });
   }
-  
+
     async finalizarCarrinho() {
     const carrinho = await this.prisma.carrinho.findFirst({
       where: { finalizado: false },
@@ -164,6 +157,20 @@ export class CarrinhoService {
     }
 
     return carrinho;
+  }
+
+  async getHistoricoDePedidos() {
+    return this.prisma.carrinho.findMany({
+      where: { finalizado: true },
+      orderBy: { criacao: 'desc' },
+      include: {
+        itens: {
+          include: {
+            produto: true,
+          },
+        },
+      },
+    });
   }
 
 

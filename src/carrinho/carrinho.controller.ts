@@ -31,4 +31,10 @@ export class CarrinhoController {
   getCarrinhoAtual() {
     return this.carrinhoService.getCarrinhoAtual();
   }
+
+  @Get('historico')
+  getHistorico() {
+    return this.carrinhoService.getHistoricoDePedidos();
+  }
+  
 }

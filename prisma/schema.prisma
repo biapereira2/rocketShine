@@ -32,7 +32,7 @@ model Carrinho {
 
 model ItemCarrinho {
   id          Int      @id @default(autoincrement())
-  produto     Produto  @relation(fields: [produtoId], references: [id])
+  produto     Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
   produtoId   Int
   quantidade  Int
   carrinho    Carrinho @relation(fields: [carrinhoId], references: [id])

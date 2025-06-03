@@ -1,15 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produto } from '../../generated/prisma';
-
+import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ProdutoService {
   constructor(private prisma: PrismaService) {}
 
-  create(createProdutoDto: CreateProdutoDto) {
+  async create(createProdutoDto: CreateProdutoDto): Promise<Produto> {
+    const dto = plainToInstance(CreateProdutoDto, createProdutoDto);
+    const errors = await validate(dto);
+
+    if (errors.length > 0) {
+      const messages = errors.map(err => Object.values(err.constraints ?? {})).flat();
+      throw new BadRequestException(messages.join(', '));
+    }
+
     return this.prisma.produto.create({
       data: createProdutoDto,
     });
@@ -27,10 +36,11 @@ export class ProdutoService {
 
   async findByName(nome: string): Promise<Produto[]> {
     return this.prisma.produto.findMany({
-      where: { 
-        nome:{
-          contains: nome.toLowerCase()
-        } },
+      where: {
+        nome: {
+          contains: nome.toLowerCase(),
+        },
+      },
     });
   }
 
